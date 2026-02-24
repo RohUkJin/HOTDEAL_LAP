@@ -20,8 +20,8 @@ AI를 활용한 실시간 커뮤니티 핫딜 수집 및 스마트 추천 플랫
 * **DB 교차 검증 및 필터링:** 확장 추출된 20여 개의 연관 키워드 배열은 다시 Supabase를 향해 `ilike` 조건 기반의 OR 쿼리로 실행됩니다. 
 * **결과 도출:** 검색된 데이터 중 자체 추천 점수, 커뮤니티 추천수, 댓글수의 비중에 따라 내림차순 정렬된 최적의 맞춤 AI 핫딜 TOP 20이 사용자에게 최종 노출됩니다.
 
-### 4. 에러 핸들링 및 안정성 (Fallback & Exception Handling)
-* 메인 추론 모델(`gemini-2.5-flash`)의 API Rate Limit(429 Error, 사용량 초과)가 감지될 경우 에러를 반환하지 않고, 즉시 백업용 경량화 모델(`gemini-2.5-flash-lite`)로 트래픽을 자동 우회(Fallback)시키는 로직이 구현되어 있어 안정적인 서비스 연속성을 보장합니다.
+### 4. 에러 핸들링 및 안정성 (AI 맞춤 추천 전용 Fallback)
+* 유저가 직접 '맞춤 핫딜'을 검색할 때 사용되는 **AI 맞춤 추천 통신**에서, 메인 추론 모델(`gemini-2.5-flash`)의 API Rate Limit(429 Error, 사용량 초과)가 감지될 경우 에러를 반환하지 않고, 즉시 백업용 경량화 모델(`gemini-2.5-flash-lite`)로 트래픽을 자동 우회(Fallback)시키는 로직이 구현되어 있어 안정적인 서비스 연속성을 보장합니다. (※ 해당 로직은 일 2회 백그라운드에서 진행되는 전체 상품 수집·분석용이 아닌, 유저 요청 시 실시간 응답용으로 분리되어 작용합니다.)
 
 ## 기술 스택 (Tech Stack)
 * **Client:** Next.js 15, React(TypeScript), Styled-Components, Framer Motion
