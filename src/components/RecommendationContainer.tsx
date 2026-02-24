@@ -92,23 +92,6 @@ export default function RecommendationContainer({ result }: RecommendationContai
         );
     }
 
-    // Reorder Top 3: [2nd, 1st, 3rd] -> indices [1, 0, 2]
-    // If < 3 items, we just show what we have. 
-    // If 2 items: [2nd, 1st] -> indices [1, 0] ?? No, user said "if < 3, 1-2 order". 
-    // "아이템이 만약 3개 미만이라면 1 2 순으로 변경" -> This means standard order [0, 1].
-    // So ONLY if >= 3, we do [1, 0, 2].
-
-    let reorderedTop3 = top3;
-    if (top3.length >= 3) {
-        reorderedTop3 = [top3[1], top3[0], top3[2]];
-    }
-    // Note: The visual rank badge needs to reflect the ORIGINAL rank, not the new position.
-    // top3[0] is Rank 1. top3[1] is Rank 2.
-    // In reordered array:
-    // index 0 is Rank 2
-    // index 1 is Rank 1
-    // index 2 is Rank 3
-
     return (
         <Container ref={containerRef}>
             <Header>
@@ -130,26 +113,11 @@ export default function RecommendationContainer({ result }: RecommendationContai
             </Header>
 
             <BestSection>
-                {reorderedTop3.map((item, index) => {
-                    // Determine original rank based on logic
-                    // If >= 3:
-                    // index 0 -> was top3[1] -> Rank 2
-                    // index 1 -> was top3[0] -> Rank 1
-                    // index 2 -> was top3[2] -> Rank 3
-
-                    // IF < 3:
-                    // index 0 -> Rank 1
-                    // index 1 -> Rank 2
-
-                    let rank = index + 1;
-                    if (top3.length >= 3) {
-                        if (index === 0) rank = 2;
-                        else if (index === 1) rank = 1;
-                        else if (index === 2) rank = 3;
-                    }
+                {top3.map((item, index) => {
+                    const rank = index + 1;
 
                     return (
-                        <BestCardWrapper key={item.id} $rank={rank}>
+                        <BestCardWrapper key={item.id} $rank={rank} $totalCount={top3.length}>
                             <RankBadge $rank={rank}>{rank}위</RankBadge>
                             <TotalCard item={item} />
                         </BestCardWrapper>
@@ -161,7 +129,7 @@ export default function RecommendationContainer({ result }: RecommendationContai
 
             <OtherTitle>이런 상품은 어때요?</OtherTitle>
             <Grid>
-                {others.map((item, index) => (
+                {others.map((item) => (
                     <TotalCard key={item.id} item={item} />
                 ))}
             </Grid>
@@ -205,6 +173,10 @@ const Title = styled.h2`
     background: linear-gradient(90deg, var(--text-primary), var(--primary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+
+    @media (max-width: 640px) {
+        font-size: 28px;
+    }
 `;
 
 const TooltipIcon = styled.button`
@@ -239,6 +211,10 @@ const Subtitle = styled.p`
     strong {
         color: var(--primary);
         font-weight: 700;
+
+        @media (max-width: 640px) {
+            font-size: 16px;
+        }
     }
 `;
 
@@ -274,6 +250,11 @@ const DisclaimerText = styled.div`
     font-size: 13px;
     color: var(--text-secondary);
     opacity: 0.8;
+
+    @media (max-width: 640px) {
+        font-size: 10px;
+        line-height: 1.25;
+    }
 `;
 
 const BestSection = styled.div`
@@ -284,13 +265,14 @@ const BestSection = styled.div`
     margin-bottom: 20px;
 `;
 
-const BestCardWrapper = styled.div<{ $rank: number }>`
+const BestCardWrapper = styled.div<{ $rank: number; $totalCount: number }>`
     position: relative;
     width: 100%;
     max-width: 380px;
     transform: ${props => props.$rank === 1 ? 'scale(1.05)' : 'scale(1)'};
     z-index: ${props => props.$rank === 1 ? '2' : '1'};
     transition: transform 0.3s;
+    order: ${props => props.$totalCount >= 3 ? (props.$rank === 1 ? 2 : props.$rank === 2 ? 1 : 3) : props.$rank};
     
     &:hover {
         transform: ${props => props.$rank === 1 ? 'scale(1.08)' : 'scale(1.03)'};
@@ -299,6 +281,7 @@ const BestCardWrapper = styled.div<{ $rank: number }>`
     @media (max-width: 1024px) {
         transform: scale(1);
         max-width: 100%;
+        order: ${props => props.$rank};
     }
 `;
 

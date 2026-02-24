@@ -248,6 +248,12 @@ const PopupContainer = styled.div`
     flex-direction: column;
     color: var(--text-primary);
     overflow: hidden;
+
+    @media (max-width: 640px) {
+        padding: 24px;
+        border-radius: 20px;
+        min-height: 320px;
+    }
 `;
 
 
@@ -271,6 +277,10 @@ const Question = styled.h2`
     margin: 0;
     letter-spacing: -0.5px;
     word-break: keep-all;
+
+    @media (max-width: 640px) {
+        font-size: 20px;
+    }
 `;
 
 const InputWrapper = styled.div`
@@ -307,6 +317,12 @@ const SearchTextarea = styled.textarea`
         color: var(--text-secondary);
         opacity: 0.7;
     }
+
+    @media (max-width: 640px) {
+        height: 100px;
+        padding: 16px;
+        font-size: 13px;
+    }
 `;
 
 const SubmitButton = styled(motion.button)`
@@ -325,6 +341,11 @@ const SubmitButton = styled(motion.button)`
         cursor: not-allowed;
         box-shadow: none;
         opacity: 0.5;
+    }
+
+    @media (max-width: 640px) {
+        padding: 8px 16px;
+        font-size: 14px;
     }
 `;
 
@@ -374,6 +395,12 @@ const MascotStage = styled.div`
     justify-content: center;
     align-items: center;
     z-index: 10;
+
+    @media (max-width: 640px) {
+        width: 140px;
+        height: 120px;
+        margin-bottom: 10px;
+    }
 `;
 
 const LogoImage = styled(Image)`
@@ -382,6 +409,12 @@ const LogoImage = styled(Image)`
     border-radius: 50%;
     background: #fff;
     padding: 10px;
+
+    @media (max-width: 640px) {
+        width: 70px !important;
+        height: 70px !important;
+        padding: 8px;
+    }
 `;
 
 const MagnifyingGlass = styled.div`

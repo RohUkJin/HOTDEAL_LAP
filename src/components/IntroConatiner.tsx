@@ -75,7 +75,7 @@ export default function IntroContainer({ onAIComplete }: IntroContainerProps) {
             <ul>
               <li><Blue>분석</Blue> 유저 댓글의 미묘한 뉘앙스 파악 ("쟁여둡니다", "역대가" 등 긍정 반응 확인)</li>
               <li><Blue>분석</Blue> 식품, 휴지, 사무용품 등 기업 비품이나 생필품으로서의 적합성 여부 판단</li>
-              <li><Blue>판정</Blue> 모든 조건을 만족하는 건만 최종적으로 <strong>HOT / DROP</strong> 상태 판정 후 요약 코멘트 작성</li>
+              <li><Blue>판정</Blue> 모든 조건을 만족하는 건만 최종적으로 상태 판정 후 요약 코멘트 작성</li>
             </ul>
           </DetailSection>
         </DetailContent>
@@ -180,8 +180,7 @@ const PipelineVisual = styled.div`
     padding: 10px 0;
     
     @media (max-width: 640px) {
-        flex-direction: column;
-        gap: 10px;
+        gap: 8px;
     }
 `;
 
@@ -191,11 +190,23 @@ const PipelineStep = styled.div`
     align-items: center;
     gap: 8px;
     width: 80px;
+
+    @media (max-width: 640px) {
+        width: 60px;
+        gap: 6px;
+    }
 `;
 
 const StepLabel = styled.div`
     font-size: 12px;
     color: #888;
+    text-align: center;
+    word-break: keep-all;
+    white-space: nowrap;
+
+    @media (max-width: 640px) {
+        font-size: 10px;
+    }
 `;
 
 const StepBar = styled.div<{ $width: number; $color: string }>`
@@ -207,8 +218,8 @@ const StepBar = styled.div<{ $width: number; $color: string }>`
     min-height: 4px;
     
     @media (max-width: 640px) {
-         width: ${props => props.$width}%;
-         height: 12px;
+         width: 30px;
+         height: ${props => props.$width * 0.7}px;
     }
 `;
 
@@ -216,14 +227,18 @@ const StepValue = styled.div`
     font-size: 14px;
     font-weight: 700;
     color: var(--text-primary);
+
+    @media (max-width: 640px) {
+        font-size: 12px;
+    }
 `;
 
 const PipelineArrow = styled.div`
     color: #444;
     font-size: 12px;
     
-    @media (ma-width: 641px) {
-        transform: rotate(-90deg); 
+    @media (max-width: 640px) {
+        font-size: 10px;
     }
 `;
 
@@ -394,6 +409,10 @@ const DetailSection = styled.div`
         display: flex;
         align-items: center;
         gap: 8px;
+
+        @media (max-width: 640px) {
+            line-height: 1.25;
+        }      
     }
 `;
 
