@@ -42,8 +42,8 @@ export default function AIPipelineModal({ isOpen, onClose }: AIPipelineModalProp
                         <StepCard>
                             <StepNumber>2</StepNumber>
                             <StepIcon>🧠</StepIcon>
-                            <StepTitle>AI 분석</StepTitle>
-                            <StepDesc>Gemini AI가 문맥을 파악해 카테고리와 구체적인 검색 키워드를 추출합니다.</StepDesc>
+                            <StepTitle>AI 분석 및 확장</StepTitle>
+                            <StepDesc>Gemini AI(2.5 Flash)가 문맥을 파악해 적합한 카테고리를 찾고, 메인 검색어와 다수의 맞춤 연관 키워드를 함께 폭넓게 추출합니다.</StepDesc>
                         </StepCard>
 
                         <Arrow>➔</Arrow>
@@ -52,7 +52,7 @@ export default function AIPipelineModal({ isOpen, onClose }: AIPipelineModalProp
                             <StepNumber>3</StepNumber>
                             <StepIcon>🔍</StepIcon>
                             <StepTitle>DB 교차 검색</StepTitle>
-                            <StepDesc>Supabase 실시간 데이터베이스에서 키워드를 매칭하고 점수순으로 정렬합니다.</StepDesc>
+                            <StepDesc>Supabase 실시간 데이터베이스에서 신고된 내역이 없는 깨끗한 데이터 중, 확장된 키워드로 교차 검색 후 점수·추천·댓글 종합 순위로 정렬합니다.</StepDesc>
                         </StepCard>
 
                         <Arrow>➔</Arrow>
@@ -61,12 +61,12 @@ export default function AIPipelineModal({ isOpen, onClose }: AIPipelineModalProp
                             <StepNumber>4</StepNumber>
                             <StepIcon>🎁</StepIcon>
                             <StepTitle>맞춤 핫딜 제공</StepTitle>
-                            <StepDesc>가장 추천할 만한 핫딜을 선별하여 다정한 AI 코멘트와 함께 보여줍니다.</StepDesc>
+                            <StepDesc>중복된 딜을 제거한 최정예 핫딜들을 선별하여, 다정한 AI 코멘트와 함께 사용자에게 제공합니다.</StepDesc>
                         </StepCard>
                     </PipelineGrid>
 
                     <BottomNote>
-                        💡 AI는 사용자의 요청이 넓은 의미일 경우 강제 키워드 필터링을 생략하여 더욱 폭넓은 결과를 제시하도록 똑똑하게 설계되어 있습니다.
+                        💡 사용자의 요청이 모호하고 넓은 의미일 경우, AI가 스스로 탐색망을 넓혀 최대 20개의 연관 아이템 키워드를 동시다발적으로 검색합니다.
                     </BottomNote>
                 </ModalContainer>
             </Overlay>
