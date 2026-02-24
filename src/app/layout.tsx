@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import StyledComponentsRegistry from "../lib/registry";
 import GlobalStyles from "./GlobalStyles";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { Analytics } from "@vercel/analytics/next";
 
 import localFont from "next/font/local";
 
@@ -50,6 +51,7 @@ export default function RootLayout({
           <ThemeProvider>
             <GlobalStyles />
             {children}
+            <Analytics />
           </ThemeProvider>
         </StyledComponentsRegistry>
       </body>
