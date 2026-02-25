@@ -51,8 +51,8 @@ export default function AIPipelineModal({ isOpen, onClose }: AIPipelineModalProp
                         <StepCard>
                             <StepNumber>3</StepNumber>
                             <StepIcon>🔍</StepIcon>
-                            <StepTitle>DB 교차 검색</StepTitle>
-                            <StepDesc>Supabase 실시간 데이터베이스에서 신고된 내역이 없는 깨끗한 데이터 중, 확장된 키워드로 교차 검색 후 점수·추천·댓글 종합 순위로 정렬합니다.</StepDesc>
+                            <StepTitle>DB 교차 검색 및 추천 정렬</StepTitle>
+                            <StepDesc>실시간 데이터베이스에서 확장된 키워드로 교차 검색 후, 커뮤니티 인기도 점수와 AI 키워드 매칭 가중치를 결합한 '복합 추천 순위'로 정렬합니다.</StepDesc>
                         </StepCard>
 
                         <Arrow>➔</Arrow>

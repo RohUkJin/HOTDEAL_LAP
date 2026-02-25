@@ -281,12 +281,12 @@ export async function getRecommendationFromPrompt(prompt: string) {
             query = query.or(orQuery);
         }
 
-        // Logic: 점수 > 추천수 > 댓글수
+        // DB에서 넉넉한 수량을 가져온 후, 프론트(서버) 단에서 키워드 가중치 기반 복합 정렬
         const { data, error } = await query
             .order('score', { ascending: false })
             .order('votes', { ascending: false })
             .order('comment_count', { ascending: false })
-            .limit(40);
+            .limit(100);
 
         if (error) {
             console.error(`Error fetching recommendations by prompt:`, error);
@@ -295,6 +295,35 @@ export async function getRecommendationFromPrompt(prompt: string) {
 
         let filteredData = data?.filter((item: any) => isValidLink(item.link || item.url)) || [];
         filteredData = removeDuplicatesByTitle(filteredData);
+
+        // AI 가중치 복합 정렬 로직 (키워드 매칭 점수 + 커뮤니티 점수)
+        filteredData = filteredData.map((item: any) => {
+            let ai_score = item.score || 0; // 기본 커뮤니티 점수를 베이스로 함
+            const title = item.title?.toLowerCase() || '';
+
+            // 메인 검색어 매칭 (높은 가중치)
+            if (search_keywords && Array.isArray(search_keywords)) {
+                search_keywords.forEach((kw: string) => {
+                    if (kw && title.includes(kw.toLowerCase())) {
+                        ai_score += 50; // 메인 검색어가 제목에 포함될 경우 높은 가점
+                    }
+                });
+            }
+
+            // 연관 검색어 매칭 (낮은 가중치)
+            if (related_keywords && Array.isArray(related_keywords)) {
+                related_keywords.forEach((kw: string) => {
+                    if (kw && title.includes(kw.toLowerCase())) {
+                        ai_score += 15; // 연관 검색어 포함 시 중간 가점
+                    }
+                });
+            }
+
+            return { ...item, ai_score };
+        });
+
+        // ai_score를 기준으로 내림차순 정렬
+        filteredData.sort((a: any, b: any) => b.ai_score - a.ai_score);
 
         return {
             success: true,
