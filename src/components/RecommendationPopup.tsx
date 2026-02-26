@@ -321,7 +321,7 @@ const SearchTextarea = styled.textarea`
     @media (max-width: 640px) {
         height: 100px;
         padding: 16px;
-        font-size: 13px;
+        font-size: 16px;
     }
 `;
 
