@@ -44,7 +44,7 @@ export default function RecommendationPopup({ isOpen, onClose, onComplete }: Rec
 
         isAnalyzingRef.current = true;
         setIsAnalyzing(true);
-        setCurrentLog('AI가 추천 상품을 샅샅이 검색하고 있어요 🏃‍♂️💨');
+        setCurrentLog('AI가 맥락에 맞는 최적의 핫딜을 분석 중입니다 🏃‍♂️💨');
         setProgress(20);
 
         // Fake progress bar while waiting for AI

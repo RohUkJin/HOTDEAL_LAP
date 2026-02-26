@@ -42,8 +42,8 @@ export default function AIPipelineModal({ isOpen, onClose }: AIPipelineModalProp
                         <StepCard>
                             <StepNumber>2</StepNumber>
                             <StepIcon>🧠</StepIcon>
-                            <StepTitle>AI 분석 및 확장</StepTitle>
-                            <StepDesc>Gemini AI(2.5 Flash)가 문맥을 파악해 적합한 카테고리를 찾고, 메인 검색어와 다수의 맞춤 연관 키워드를 함께 폭넓게 추출합니다.</StepDesc>
+                            <StepTitle>AI 분석 및 768차원 벡터 변환</StepTitle>
+                            <StepDesc>Gemini AI(2.5 Flash)가 문맥을 파악해 적합한 카테고리를 찾고, 사용자의 입력 의도를 768차원 벡터(Vector)값으로 변환하여 검색 준비를 합니다.</StepDesc>
                         </StepCard>
 
                         <Arrow>➔</Arrow>
@@ -51,8 +51,8 @@ export default function AIPipelineModal({ isOpen, onClose }: AIPipelineModalProp
                         <StepCard>
                             <StepNumber>3</StepNumber>
                             <StepIcon>🔍</StepIcon>
-                            <StepTitle>DB 교차 검색 및 추천 정렬</StepTitle>
-                            <StepDesc>실시간 데이터베이스에서 확장된 키워드로 교차 검색 후, 커뮤니티 인기도 점수와 AI 키워드 매칭 가중치를 결합한 '복합 추천 순위'로 정렬합니다.</StepDesc>
+                            <StepTitle>의미론적 유사도(Semantic) 검색</StepTitle>
+                            <StepDesc>단순 단어 매칭이 아닌, 단어의 숨은 의미와 맥락을 AI 유사도 분석으로 정밀하게 매칭하여 사용자의 의도에 완벽하게 부합하는 핫딜을 찾아옵니다.</StepDesc>
                         </StepCard>
 
                         <Arrow>➔</Arrow>
@@ -66,7 +66,7 @@ export default function AIPipelineModal({ isOpen, onClose }: AIPipelineModalProp
                     </PipelineGrid>
 
                     <BottomNote>
-                        💡 사용자의 요청이 모호하고 넓은 의미일 경우, AI가 스스로 탐색망을 넓혀 최대 20개의 연관 아이템 키워드를 동시다발적으로 검색합니다.
+                        💡 키워드가 조금 상이하거나 은유적인 표현이더라도, AI가 숨은 의미를 파악하여 가장 연관성이 높은 최적의 아이템을 똑똑하게 추천합니다.
                     </BottomNote>
                 </ModalContainer>
             </Overlay>
