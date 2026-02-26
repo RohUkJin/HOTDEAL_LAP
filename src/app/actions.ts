@@ -258,72 +258,58 @@ export async function getRecommendationFromPrompt(prompt: string) {
 
         const { target_categories, search_keywords, related_keywords, ai_comment } = aiData;
 
-        // DB (Supabase) 교차 검색
-        let query = supabase
-            .from('hotdeals')
-            .select('*')
-            .lt('report_count', 2);
-
         // 카테고리 매칭 필터 (Drink가 포함되었을 때 Food도 강제로 포함시켜 핫딜 게시판 분류 오류 방어)
         let finalCategories = target_categories || [];
         if (finalCategories.includes('Drink') && !finalCategories.includes('Food')) {
             finalCategories.push('Food');
         }
 
-        if (finalCategories.length > 0) {
-            query = query.in('category', finalCategories.flatMap((cat: string) => [cat, `Category.${cat.toUpperCase()}`]));
+        // 텍스트 매칭이 아닌 Vector Embedding 을 위한 프롬프트 변환 수행
+        let embeddingResponse;
+        try {
+            embeddingResponse = await ai.models.embedContent({
+                model: 'gemini-embedding-001',
+                contents: prompt,
+                config: {
+                    taskType: "RETRIEVAL_QUERY",
+                    outputDimensionality: 768
+                }
+            });
+        } catch (embedError) {
+            console.error("[actions] Vector Embedding Generation Error:", embedError);
+            throw embedError;
         }
 
-        // 키워드 OR 조건 검색 (title 확장)
-        const all_keywords = [...(search_keywords || []), ...(related_keywords || [])];
-        if (all_keywords && all_keywords.length > 0) {
-            const orQuery = all_keywords.map((kw: string) => `title.ilike.%${kw}%`).join(',');
-            query = query.or(orQuery);
+        const queryEmbedding = embeddingResponse.embeddings?.[0]?.values;
+        if (!queryEmbedding) {
+            throw new Error("AI가 유사도 분석을 위한 벡터값을 생성하지 못했습니다.");
         }
 
-        // DB에서 넉넉한 수량을 가져온 후, 프론트(서버) 단에서 키워드 가중치 기반 복합 정렬
-        const { data, error } = await query
-            .order('score', { ascending: false })
-            .order('votes', { ascending: false })
-            .order('comment_count', { ascending: false })
-            .limit(100);
+        const filterCats = finalCategories.length > 0
+            ? finalCategories.flatMap((cat: string) => [cat, `Category.${cat.toUpperCase()}`])
+            : null;
+
+        // Vector DB 코사인 유사도 검색 (Supabase RPC - match_hotdeals)
+        const { data, error } = await supabase.rpc('match_hotdeals', {
+            query_embedding: queryEmbedding,
+            match_threshold: 0.1, // 코사인 유사도 (값이 낮을수록 느슨한 매칭)
+            match_count: 50,      // 추천 후보군 최대 개수
+            filter_categories: filterCats
+        });
 
         if (error) {
-            console.error(`Error fetching recommendations by prompt:`, error);
+            console.error(`[actions] Error fetching semantic vector recommendations via RPC:`, error);
             throw error;
         }
 
         let filteredData = data?.filter((item: any) => isValidLink(item.link || item.url)) || [];
         filteredData = removeDuplicatesByTitle(filteredData);
 
-        // AI 가중치 복합 정렬 로직 (키워드 매칭 점수 + 커뮤니티 점수)
-        filteredData = filteredData.map((item: any) => {
-            let ai_score = item.score || 0; // 기본 커뮤니티 점수를 베이스로 함
-            const title = item.title?.toLowerCase() || '';
-
-            // 메인 검색어 매칭 (높은 가중치)
-            if (search_keywords && Array.isArray(search_keywords)) {
-                search_keywords.forEach((kw: string) => {
-                    if (kw && title.includes(kw.toLowerCase())) {
-                        ai_score += 50; // 메인 검색어가 제목에 포함될 경우 높은 가점
-                    }
-                });
-            }
-
-            // 연관 검색어 매칭 (낮은 가중치)
-            if (related_keywords && Array.isArray(related_keywords)) {
-                related_keywords.forEach((kw: string) => {
-                    if (kw && title.includes(kw.toLowerCase())) {
-                        ai_score += 15; // 연관 검색어 포함 시 중간 가점
-                    }
-                });
-            }
-
-            return { ...item, ai_score };
+        // Vector 코사인 유사도 기반 거리순으로 정렬되어 반환되었으므로 순서를 유지하여 ai_score를 대체 부여
+        // (프론트 통일성을 유지하기 위함)
+        filteredData = filteredData.map((item: any, index: number) => {
+            return { ...item, ai_score: 100 - index * 2 };
         });
-
-        // ai_score를 기준으로 내림차순 정렬
-        filteredData.sort((a: any, b: any) => b.ai_score - a.ai_score);
 
         return {
             success: true,
