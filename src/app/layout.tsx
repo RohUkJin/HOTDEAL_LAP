@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import StyledComponentsRegistry from "../lib/registry";
 import GlobalStyles from "./GlobalStyles";
-import { ThemeProvider } from "@/context/ThemeContext";
 import { Analytics } from "@vercel/analytics/next";
-
 import localFont from "next/font/local";
 
 const geistSans = Geist({
@@ -33,14 +31,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" suppressHydrationWarning>
+    <html lang="ko" data-theme="dark" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                var theme = localStorage.getItem('theme') || 'dark';
-                document.documentElement.setAttribute('data-theme', theme);
+                document.documentElement.setAttribute('data-theme', 'dark');
               } catch (e) {}
             `,
           }}
@@ -48,11 +45,9 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${bmHanna.variable}`}>
         <StyledComponentsRegistry>
-          <ThemeProvider>
-            <GlobalStyles />
-            {children}
-            <Analytics />
-          </ThemeProvider>
+          <GlobalStyles />
+          {children}
+          <Analytics />
         </StyledComponentsRegistry>
       </body>
     </html>
